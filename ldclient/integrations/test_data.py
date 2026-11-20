@@ -259,7 +259,7 @@ class FlagBuilder:
 
             td.flag('new-flag').variations('red', 'green', 'blue')
 
-        :param variations: the the desired variations
+        :param variations: the desired variations
         :return: the flag builder
         """
         self._variations = list(variations)
