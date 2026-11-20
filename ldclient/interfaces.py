@@ -846,7 +846,7 @@ class BigSegmentStoreStatus:
         If this property is False, the store is not able to make queries (for instance, it may not have
         a valid database connection). In this case, the SDK will treat any reference to a Big Segment
         as if no users are included in that segment. Also, the :func:`ldclient.evaluation.EvaluationDetail.reason`
-        associated with with any flag evaluation that references a Big Segment when the store is not
+        associated with any flag evaluation that references a Big Segment when the store is not
         available will have a ``bigSegmentsStatus`` of ``"STORE_ERROR"``.
         """
         return self.__available
@@ -1676,7 +1676,7 @@ class EventName(str, Enum):
 
     PAYLOAD_TRANSFERRED = "payload-transferred"
     """
-    Specifies that that all data required to bring the existing data set to
+    Specifies that all data required to bring the existing data set to
     a new version has been transferred.
     """
 
