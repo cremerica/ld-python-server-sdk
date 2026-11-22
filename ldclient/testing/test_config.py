@@ -9,6 +9,34 @@ CONFIG_CLASSES = [Config, AsyncConfig]
 CONFIG_IDS = ["Config", "AsyncConfig"]
 
 
+@pytest.mark.parametrize("config_class", CONFIG_CLASSES, ids=CONFIG_IDS)
+@pytest.mark.parametrize("explicit_none", [False, True], ids=["omitted", "none"])
+def test_config_creates_fresh_defaults(config_class, explicit_none):
+    kwargs = {"defaults": None} if explicit_none else {}
+    first = config_class(sdk_key="SDK_KEY", **kwargs)
+    assert first.get_default("flag", False) is False
+    first_defaults = getattr(first, f"_{config_class.__name__}__defaults")
+    first_defaults["flag"] = True
+
+    second = config_class(sdk_key="SDK_KEY", **kwargs)
+
+    assert first.get_default("flag", False) is True
+    assert second.get_default("flag", False) is False
+
+
+@pytest.mark.parametrize("config_class", CONFIG_CLASSES, ids=CONFIG_IDS)
+@pytest.mark.parametrize("initial_defaults", [{}, {"flag": True}], ids=["empty", "nonempty"])
+def test_config_preserves_supplied_defaults(config_class, initial_defaults):
+    defaults = dict(initial_defaults)
+    config = config_class(sdk_key="SDK_KEY", defaults=defaults)
+    assert defaults == initial_defaults
+    assert config.get_default("flag", False) is defaults.get("flag", False)
+
+    defaults["flag"] = "updated"
+
+    assert config.get_default("flag", False) == "updated"
+
+
 def test_copy_config():
     old_sdk_key = "OLD_SDK_KEY"
     new_sdk_key = "NEW_SDK_KEY"

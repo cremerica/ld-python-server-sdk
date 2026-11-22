@@ -76,7 +76,7 @@ class DynamoDB:
     """Provides factory methods for integrations between the LaunchDarkly SDK and DynamoDB."""
 
     @staticmethod
-    def new_feature_store(table_name: str, prefix: Optional[str] = None, dynamodb_opts: Mapping[str, Any] = {}, caching: CacheConfig = CacheConfig.default()) -> CachingStoreWrapper:
+    def new_feature_store(table_name: str, prefix: Optional[str] = None, dynamodb_opts: Optional[Mapping[str, Any]] = None, caching: CacheConfig = CacheConfig.default()) -> CachingStoreWrapper:
         """Creates a DynamoDB-backed implementation of :class:`ldclient.interfaces.FeatureStore`.
         For more details about how and why you can use a persistent feature store, see the
         `SDK reference guide <https://docs.launchdarkly.com/sdk/concepts/data-stores>`_.
@@ -110,11 +110,13 @@ class DynamoDB:
           once the in-memory store has been initialized, so these settings only
           affect the brief bootstrap window. See :class:`ldclient.feature_store.CacheConfig`.
         """
+        if dynamodb_opts is None:
+            dynamodb_opts = {}
         core = _DynamoDBFeatureStoreCore(table_name, prefix, dynamodb_opts)
         return CachingStoreWrapper(core, caching)
 
     @staticmethod
-    def new_big_segment_store(table_name: str, prefix: Optional[str] = None, dynamodb_opts: Mapping[str, Any] = {}):
+    def new_big_segment_store(table_name: str, prefix: Optional[str] = None, dynamodb_opts: Optional[Mapping[str, Any]] = None):
         """
         Creates a DynamoDB-backed Big Segment store.
 
@@ -145,10 +147,12 @@ class DynamoDB:
         :param dynamodb_opts: optional parameters for configuring the DynamoDB client, as defined in
           the `boto3 API <https://boto3.amazonaws.com/v1/documentation/api/latest/reference/core/session.html#boto3.session.Session.client>`_
         """
+        if dynamodb_opts is None:
+            dynamodb_opts = {}
         return _DynamoDBBigSegmentStore(table_name, prefix, dynamodb_opts)
 
     @staticmethod
-    def async_feature_store(table_name: str, prefix: Optional[str] = None, dynamodb_opts: Mapping[str, Any] = {}, caching: CacheConfig = CacheConfig.default()):
+    def async_feature_store(table_name: str, prefix: Optional[str] = None, dynamodb_opts: Optional[Mapping[str, Any]] = None, caching: CacheConfig = CacheConfig.default()):
         """Creates an async DynamoDB-backed implementation of :class:`~ldclient.interfaces.AsyncFeatureStore`.
 
         .. caution::
@@ -196,6 +200,8 @@ class DynamoDB:
         from ldclient.impl.integrations.dynamodb.async_dynamodb_feature_store import (
             _AsyncDynamoDBFeatureStoreCore
         )
+        if dynamodb_opts is None:
+            dynamodb_opts = {}
         core = _AsyncDynamoDBFeatureStoreCore(table_name, prefix, dynamodb_opts)
         wrapper = AsyncCachingStoreWrapper(core, caching)
         wrapper._core = core  # exposed for testing
@@ -211,7 +217,7 @@ class Redis:
 
     @staticmethod
     def new_feature_store(
-        url: str = 'redis://localhost:6379/0', prefix: str = 'launchdarkly', max_connections: int = 16, caching: CacheConfig = CacheConfig.default(), redis_opts: Dict[str, Any] = {}
+        url: str = 'redis://localhost:6379/0', prefix: str = 'launchdarkly', max_connections: int = 16, caching: CacheConfig = CacheConfig.default(), redis_opts: Optional[Dict[str, Any]] = None
     ) -> CachingStoreWrapper:
         """
         Creates a Redis-backed implementation of :class:`~ldclient.interfaces.FeatureStore`.
@@ -250,13 +256,15 @@ class Redis:
                 max_connections
             )
 
+        if redis_opts is None:
+            redis_opts = {}
         core = _RedisFeatureStoreCore(url, prefix, redis_opts)
         wrapper = CachingStoreWrapper(core, caching)
         wrapper._core = core  # exposed for testing
         return wrapper
 
     @staticmethod
-    def new_big_segment_store(url: str = 'redis://localhost:6379/0', prefix: str = 'launchdarkly', max_connections: int = 16, redis_opts: Dict[str, Any] = {}) -> BigSegmentStore:
+    def new_big_segment_store(url: str = 'redis://localhost:6379/0', prefix: str = 'launchdarkly', max_connections: int = 16, redis_opts: Optional[Dict[str, Any]] = None) -> BigSegmentStore:
         """
         Creates a Redis-backed Big Segment store.
 
@@ -289,10 +297,12 @@ class Redis:
                 max_connections
             )
 
+        if redis_opts is None:
+            redis_opts = {}
         return _RedisBigSegmentStore(url, prefix, redis_opts)
 
     @staticmethod
-    def async_feature_store(url: str = 'redis://localhost:6379/0', prefix: Optional[str] = None, caching: CacheConfig = CacheConfig.default(), redis_opts: Dict[str, Any] = {}):
+    def async_feature_store(url: str = 'redis://localhost:6379/0', prefix: Optional[str] = None, caching: CacheConfig = CacheConfig.default(), redis_opts: Optional[Dict[str, Any]] = None):
         """
         Creates an async Redis-backed implementation of :class:`~ldclient.interfaces.AsyncFeatureStore`.
 
@@ -332,13 +342,15 @@ class Redis:
         from ldclient.impl.integrations.redis.async_redis_feature_store import (
             _AsyncRedisFeatureStoreCore
         )
+        if redis_opts is None:
+            redis_opts = {}
         core = _AsyncRedisFeatureStoreCore(url, prefix, redis_opts)
         wrapper = AsyncCachingStoreWrapper(core, caching)
         wrapper._core = core  # exposed for testing
         return wrapper
 
     @staticmethod
-    def async_big_segment_store(url: str = 'redis://localhost:6379/0', prefix: Optional[str] = None, redis_opts: Dict[str, Any] = {}):
+    def async_big_segment_store(url: str = 'redis://localhost:6379/0', prefix: Optional[str] = None, redis_opts: Optional[Dict[str, Any]] = None):
         """
         Creates an async Redis-backed Big Segment store implementing :class:`~ldclient.interfaces.AsyncBigSegmentStore`.
 
@@ -369,6 +381,8 @@ class Redis:
         from ldclient.impl.integrations.redis.async_redis_big_segment_store import (
             _AsyncRedisBigSegmentStore
         )
+        if redis_opts is None:
+            redis_opts = {}
         return _AsyncRedisBigSegmentStore(url, prefix, redis_opts)
 
 
