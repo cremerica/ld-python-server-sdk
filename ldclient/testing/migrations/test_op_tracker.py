@@ -41,6 +41,17 @@ class TestBuilding:
         event = tracker.build()
         assert isinstance(event, MigrationOpEvent)
 
+    def test_timestamp_uses_clock_in_milliseconds(self):
+        detail = EvaluationDetail('value', 0, {'kind': 'OFF'})
+        tracker = OpTracker("flag", None, user, detail, Stage.LIVE, clock=lambda: 1234567890.1234)
+        tracker.operation(Operation.READ)
+        tracker.invoked(Origin.OLD)
+
+        event = tracker.build()
+
+        assert isinstance(event, MigrationOpEvent)
+        assert event.timestamp == 1234567890123
+
     def test_can_build_successfully_without_a_flag(self):
         detail = EvaluationDetail('value', 0, {'kind': 'OFF'})
         tracker = OpTracker("flag", None, user, detail, Stage.LIVE)

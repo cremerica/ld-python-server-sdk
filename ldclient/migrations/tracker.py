@@ -85,12 +85,16 @@ class OpTracker:
     the returned tracker instance.
     """
 
-    def __init__(self, key: str, flag: Optional[FeatureFlag], context: Context, detail: EvaluationDetail, default_stage: Stage):
+    def __init__(self, key: str, flag: Optional[FeatureFlag], context: Context, detail: EvaluationDetail, default_stage: Stage, clock: Callable[[], float] = time.time):
+        """
+        :param clock: returns Unix time in seconds; defaults to :func:`time.time`
+        """
         self.__key = key
         self.__flag = flag
         self.__context = context
         self.__detail = detail
         self.__default_stage = default_stage
+        self.__clock = clock
 
         self.__mutex = Lock()
 
@@ -208,8 +212,7 @@ class OpTracker:
             if error:
                 return error
 
-            # TODO: Inject this time function or something
-            timestamp = int(time.time() * 1_000)
+            timestamp = int(self.__clock() * 1_000)
 
             return MigrationOpEvent(
                 timestamp,
