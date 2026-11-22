@@ -329,7 +329,7 @@ class Config(DataSourceBuilderConfig, PrivateAttributesConfig):
         stream_uri: str = DEFAULT_STREAM_URI,
         stream: bool = True,
         initial_reconnect_delay: float = DEFAULT_INITIAL_RECONNECT_DELAY,
-        defaults: dict = {},
+        defaults: Optional[dict] = None,
         send_events: Optional[bool] = None,
         update_processor_class: Optional[Callable[['Config', FeatureStore, Event], UpdateProcessor]] = None,
         poll_interval: float = DEFAULT_POLL_INTERVAL,
@@ -442,7 +442,7 @@ class Config(DataSourceBuilderConfig, PrivateAttributesConfig):
         self.__feature_requester_class = feature_requester_class
         self.__events_max_pending = events_max_pending
         self.__flush_interval = flush_interval
-        self.__defaults = defaults
+        self.__defaults = {} if defaults is None else defaults
         if offline is True:
             send_events = False
         self.__send_events = True if send_events is None else send_events
