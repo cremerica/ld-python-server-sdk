@@ -424,7 +424,7 @@ class Config(DataSourceBuilderConfig, PrivateAttributesConfig):
         :param plugins: A list of plugins to be used with the SDK. Plugin support is currently experimental and subject to change.
         :param enable_event_compression: Whether or not to enable GZIP compression for outgoing events.
         :param omit_anonymous_contexts: Sets whether anonymous contexts should be omitted from index and identify events.
-        :param payload_filter_key: The payload filter is used to selectively limited the flags and segments delivered in the data source payload. Payload filtering is not supported with the FDv2 data system, so this has no effect on FDv2 requests.
+        :param payload_filter_key: The payload filter is used to selectively limit the flags and segments delivered in the data source payload. Payload filtering is not supported with the FDv2 data system, so this has no effect on FDv2 requests.
         :param datasystem_config: Configuration for the data system, which controls how the SDK gets flag and segment data. When set, it overrides ``feature_store``, ``update_processor_class``, ``stream``, and ``use_ldd``.
         """
         self.__sdk_key = validate_sdk_key_format(sdk_key, log)
